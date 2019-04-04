@@ -1,0 +1,23 @@
+<h1 mat-dialog-title class="pip-header">{{ 'CREATE_SITE' | translate }}</h1>
+<div mat-dialog-content class="pip-content">
+    <form fxLayout="column" fxLayoutGap="16px" [formGroup]="form" (submit)="onSubmit()">
+        <mat-form-field>
+          <input matInput [placeholder]="'CREATE_SITE_NAME' | translate" formControlName="name"
+                 required (keyup.enter)="onSubmit()">
+          <mat-error *ngIf="hasError('name', 'required')">{{'CREATE_SITE_NAME_REQUIRED' | translate}}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [placeholder]="'CREATE_SITE_DESCRIPTION' | translate" formControlName="description" (keyup.enter)="onSubmit()">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [placeholder]="'CREATE_SITE_ADDRESS' | translate" formControlName="address" (keyup.enter)="onSubmit()">
+          </mat-form-field>
+      </form>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button matDialogClose>{{ 'CREATE_SITE_CANCEL' | translate }}</button>
+    <button mat-button (click)="onSubmit()" color="primary" [disabled]="form.invalid"
+            cdkFocusInitial>
+        {{ 'CREATE_SITE_CREATE' | translate }}
+    </button>
+</div>

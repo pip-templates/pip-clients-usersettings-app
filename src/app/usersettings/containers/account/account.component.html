@@ -1,0 +1,78 @@
+<pip-document-layout [ngSwitch]="viewState$ | async">
+    <pip-document-content *ngSwitchCase="'progress'" fxFlex="grow">
+        <pip-empty-state>
+            <pip-empty-state-title [text]="'ACCOUNT_LOADING' | translate" imageUrl="./assets/progress.svg"></pip-empty-state-title>
+            <div class="pip-progress">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+        </pip-empty-state>
+    </pip-document-content>
+    <pip-document-content *ngSwitchCase="'empty'" fxFlex="grow">
+        <pip-empty-state>
+            <pip-empty-state-title [text]="'ACCOUNT_NOT_FOUND' | translate" imageUrl="./assets/empty.svg"></pip-empty-state-title>
+        </pip-empty-state>
+    </pip-document-content>
+    <pip-document-content *ngSwitchCase="'data'" fxFlex="grow">
+        <div>
+            <mat-progress-bar mode="indeterminate" *ngIf="loading$ | async" class="pip-loading"></mat-progress-bar>
+            <form fxLayout="column" fxLayoutGap="16px" [formGroup]="form">
+                <pip-picture-edit [src]="form.get('avatar').value" defaultIcon="face" (onImageLoad)="setImage($event)"
+                                  (onImageDelete)="setImage($event)"></pip-picture-edit>
+                <mat-form-field>
+                    <input matInput [placeholder]="'ACCOUNT_FULL_NAME' | translate" formControlName="name" required>
+                    <mat-error *ngIf="hasError('name', 'required')">{{'ACCOUNT_FULL_NAME_REQUIRED' | translate}}</mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput [placeholder]="'ACCOUNT_POSITION' | translate" formControlName="position">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput [placeholder]="'ACCOUNT_COMPANY' | translate" formControlName="company">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput [placeholder]="'ACCOUNT_EMAIL' | translate" formControlName="email" required>
+                    <mat-error *ngIf="hasError('email', 'required')">{{'ACCOUNT_EMAIL_REQUIRED' | translate}}</mat-error>
+                    <mat-error *ngIf="hasError('email', 'email')">{{'ACCOUNT_EMAIL_REGEX' | translate}}</mat-error>
+                </mat-form-field>
+                <button [disabled]="loading$ | async" class="change-password-btn" mat-stroked-button (click)="openChangePasswordDialog()">{{
+                    'ACCOUNT_CHANGE_PASSWORD' | translate }}</button>
+                <mat-form-field>
+                    <mat-select [disabled]="loading$ | async" [placeholder]="'ACCOUNT_LANGUAGE' | translate" [value]="form.get('language').value"
+                                (selectionChange)="onLanguageChange($event)">
+                        <mat-option *ngFor="let lang of languages" [value]="lang">{{ ('ACCOUNT_LANGUAGE_' +
+                            lang.toUpperCase()) |
+                            translate }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-select [disabled]="loading$ | async" [placeholder]="'ACCOUNT_THEME' | translate" [value]="form.get('theme').value"
+                                (selectionChange)="onThemeChange($event)">
+                        <mat-option *ngFor="let theme of themes" [value]="theme.key">
+                            {{ theme.name | translate }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-select [disabled]="loading$ | async" [placeholder]="'ACCOUNT_MENU_MODE' | translate" [value]="settings.get('menu_mode').value"
+                                (selectionChange)="onMenuModeChange($event)">
+                        <mat-option *ngFor="let mm of menuModes" [value]="mm">
+                            {{ ('ACCOUNT_MENU_MODE_' + mm.toUpperCase()) | translate }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </form>
+        </div>
+    </pip-document-content>
+    <pip-document-footer *ngIf="(viewState$ | async) === 'data'">
+        <pip-action-list>
+            <button mat-button class="pip-action-list-item" (click)="onSubmit()" [disabled]="(!form.touched && !settings.touched) || (loading$ | async)">
+                <mat-icon>done</mat-icon>
+                <span class="pip-title">{{ 'ACCOUNT_APPLY' | translate }}</span>
+            </button>
+            <button mat-button *ngIf="form.touched || settings.touched" class="pip-action-list-item" (click)="onCancel()"
+                    [disabled]="loading$ | async">
+                <mat-icon fontSet="webui" fontIcon="webui-cross"></mat-icon>
+                <span class="pip-title">{{ 'ACCOUNT_CANCEL' | translate }}</span>
+            </button>
+        </pip-action-list>
+    </pip-document-footer>
+</pip-document-layout>

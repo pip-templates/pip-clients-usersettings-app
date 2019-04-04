@@ -1,0 +1,41 @@
+<pip-document-layout>
+    <pip-document-content fxFlex="grow">
+        <ng-container [ngSwitch]="state$ | async">
+            <pip-empty-state *ngSwitchCase="'progress'">
+                <pip-empty-state-title [text]="'SESSIONS_LOADING' | translate" imageUrl="./assets/progress.svg"></pip-empty-state-title>
+                <div class="pip-progress">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+            </pip-empty-state>
+            <ng-container *ngSwitchCase="'data'">
+                <mat-progress-bar mode="indeterminate" *ngIf="loading$ | async" class="pip-loading"></mat-progress-bar>
+                <mat-list>
+                    <mat-list-item *ngFor="let session of sessions; trackBy: session?.id">
+                        <mat-icon *ngIf="session?.active" color="accent">check_circle_outline</mat-icon>
+                        <mat-icon *ngIf="!session?.active" color="warn">highlight_off</mat-icon>
+                        <div matLine>{{ formatSessionTitle(session) }}</div>
+                        <div matLine>{{ formatSessionSubtitle(session) }}</div>
+                    </mat-list-item>
+                </mat-list>
+            </ng-container>
+        </ng-container>
+    </pip-document-content>
+    <pip-document-footer *ngIf="(state$ | async) === 'data'">
+        <pip-action-list>
+            <button mat-button class="pip-action-list-item" (click)="onCloseAll()" [disabled]="loading$ | async">
+                <mat-icon fontSet="webui" fontIcon="webui-enter"></mat-icon>
+                <span class="pip-title">{{ 'SESSION_CLOSE_ALL' | translate }}</span>
+            </button>
+        </pip-action-list>
+    </pip-document-footer>
+</pip-document-layout>
+<ng-template #confirmCloseAllDialog>
+    <h2 matDialogTitle>{{ 'SESSION_CLOSE_ALL' | translate }}</h2>
+    <mat-dialog-content>
+        <p>{{ 'SESSIONS_CLOSE_ALL_DESCRIPTION' | translate }}</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button matDialogClose color="primary">{{ 'SESSIONS_CLOSE_ALL_CANCEL' | translate }}</button>
+        <button mat-button [matDialogClose]="true" color="warn">{{ 'SESSIONS_CLOSE_ALL_OK' | translate }}</button>
+    </mat-dialog-actions>
+</ng-template>

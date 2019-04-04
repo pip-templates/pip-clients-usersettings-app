@@ -1,0 +1,32 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~pip-webui2-themes/styles";
+@import "~pip-webui2-layouts/styles";
+
+@mixin snackbar-mixin($theme) {
+    $warn: map-get($theme, warn);
+    .pip-error-snackbar {
+        background-color: mat-color($warn);
+        cursor: pointer;
+        font-weight: 800;
+        min-width: 0;
+        .mat-simple-snackbar-action {
+            display: none;
+        }
+    }
+}
+
+@each $class, $theme in $themes {
+    .#{$class} {
+        @include snackbar-mixin($theme);
+    }
+}
+
+mat-dialog-container {
+    mat-dialog-content {
+        font-family: Roboto;
+    }
+    button[mat-button] {
+        text-transform: uppercase;
+    }
+}

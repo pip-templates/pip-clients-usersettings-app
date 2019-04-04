@@ -1,0 +1,53 @@
+<pip-document-layout>
+    <pip-document-content fxFlex="grow">
+        <ng-container [ngSwitch]="state$ | async">
+            <pip-empty-state *ngSwitchCase="'progress'">
+                <pip-empty-state-title [text]="'SITES_LOADING' | translate" imageUrl="./assets/progress.svg"></pip-empty-state-title>
+                <div class="pip-progress">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+            </pip-empty-state>
+            <ng-container *ngSwitchCase="'data'">
+                <mat-progress-bar mode="indeterminate" *ngIf="loading$ | async" class="pip-loading"></mat-progress-bar>
+                <mat-list>
+                    <ng-container *ngFor="let site of sites$ | async">
+                        <pip-ref-item [title]="site?.name" [subtitle]="site?.description" [letterSource]="site?.name.toUpperCase() || '?'">
+                            <pip-ref-item-actions>
+                                <button mat-icon-button>
+                                    <mat-icon aria-label="DELETE" (click)="onSiteDisconnectAsk(site)">remove_circle</mat-icon>
+                                </button>
+                            </pip-ref-item-actions>
+                        </pip-ref-item>
+                        <mat-divider></mat-divider>
+                    </ng-container>
+                </mat-list>
+            </ng-container>
+        </ng-container>
+    </pip-document-content>
+    <pip-document-footer>
+        <pip-action-list>
+            <button mat-button class="pip-action-list-item" (click)="onSiteCreate()" [disabled]="(state$ | async) !== 'data' || (loading$ | async)">
+                <!--
+                    It's not possible to use most outline icons now
+                    See issue: https://github.com/google/material-design-icons/issues/773
+                -->
+                <mat-icon aria-label="CREATE">add_box_outline</mat-icon>
+                <span class="pip-title">{{ 'SITES_NEW' | translate }}</span>
+            </button>
+            <button mat-button class="pip-action-list-item" (click)="onSiteConnect()" [disabled]="(state$ | async) !== 'data' || (loading$ | async)">
+                <mat-icon aria-label="CONNECT" fontSet="webui" fontIcon="webui-enter"></mat-icon>
+                <span class="pip-title">{{ 'SITES_CONNECT' | translate }}</span>
+            </button>
+        </pip-action-list>
+    </pip-document-footer>
+</pip-document-layout>
+<ng-template #confirmDisconnectDialog>
+    <h2 matDialogTitle>{{ 'SITES_DISCONNECT' | translate }}</h2>
+    <mat-dialog-content>
+        <p>{{ 'SITES_DISCONNECT_DESCRIPTION' | translate }}</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button matDialogClose color="primary">{{ 'SITES_DISCONNECT_CANCEL' | translate }}</button>
+        <button mat-button [matDialogClose]="true" color="warn">{{ 'SITES_DISCONNECT_OK' | translate }}</button>
+    </mat-dialog-actions>
+</ng-template>

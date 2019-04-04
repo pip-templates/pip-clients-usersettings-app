@@ -1,0 +1,17 @@
+<pip-menu-layout [ngClass]="{'pip-single-content': isSingle$ | async}">
+  <div class="pip-menu" fxLayout="column">
+    <div class="scroll-container" fxLayout="column">
+      <pip-selected (onSelect)="onSelect($event)" [index]="index">
+        <mat-nav-list disableRipple>
+          <mat-list-item pipSelectable [routerLink]="['/' + route.path]" *ngFor="let route of currentRoutes">
+            {{ ('USERSETTINGS_CONTAINER_' + route.path.toUpperCase() ) | translate }}
+          </mat-list-item>
+        </mat-nav-list>
+      </pip-selected>
+    </div>
+  </div>
+
+  <div class="pip-menu-container">
+    <router-outlet></router-outlet>
+  </div>
+</pip-menu-layout>

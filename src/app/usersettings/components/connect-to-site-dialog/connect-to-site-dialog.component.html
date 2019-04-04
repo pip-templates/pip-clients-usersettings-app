@@ -1,0 +1,27 @@
+<h1 mat-dialog-title class="pip-header">{{ 'CONNECT_TO_SITE' | translate }}</h1>
+<div mat-dialog-content class="pip-content">
+    <mat-progress-bar mode="indeterminate" class="pip-loading" *ngIf="dialogLoading$ | async"></mat-progress-bar>
+    <div fxLayoutAlign=" center">
+        <mat-form-field [disabled]="dialogLoading$ | async">
+            <input matInput [placeholder]="'CONNECT_TO_SITE_DESCRIPTION' | translate" name="siteName" [formControl]="searchControl">
+        </mat-form-field>
+        <button class="search-button" mat-button matSuffix mat-stroked-button aria-label="search" (click)="onSearch()" [disabled]="dialogLoading$ | async">
+            {{ 'CONNECT_TO_SITE_SEARCH' | translate }}
+        </button>
+    </div>
+    <mat-list *ngIf="sites && sites.length">
+        <mat-list-item *ngFor="let site of sites; trackBy: site?.id">
+            <mat-radio-button [value]="site" name="site" (change)="pickedSite = site">
+                <h3 matLine>{{ site?.name }}</h3>
+                <span matLine *ngIf="site?.address">{{ site?.address }}</span>
+            </mat-radio-button>
+        </mat-list-item>
+    </mat-list>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button matDialogClose [disabled]="data.loading$ | async">{{ 'CONNECT_TO_SITE_CANCEL' | translate }}</button>
+    <button mat-button [matDialogClose]="pickedSite" [disabled]="!pickedSite || (data.loading$ | async)" color="primary"
+            cdkFocusInitial>
+        {{ 'CONNECT_TO_SITE_CONNECT' | translate }}
+    </button>
+</div>
